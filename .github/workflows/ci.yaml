@@ -1,0 +1,11 @@
+name: ci-php-workflow
+on: [push]
+jobs:
+  check-application:
+    run-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/composer
+      - uses: ./.github/actions/config-laravel
+      - run: ./vendor/bin/phpunit
+      - run: ./vendor/bin/phpcs
