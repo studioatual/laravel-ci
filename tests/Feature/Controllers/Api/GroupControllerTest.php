@@ -13,7 +13,7 @@ class GroupControllerTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function test_index_method_and_expect_ten_results()
+    public function testIndexMethodAndExpectTenResults()
     {
         Group::factory(10)->create();
         $response = $this->get('/api/groups');
@@ -32,7 +32,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function test_store_method_and_expect_success_results()
+    public function testStoreMethodAndExpectSuccessResults()
     {
         $data = [
             'code' => rand(100, 999),
@@ -70,7 +70,7 @@ class GroupControllerTest extends TestCase
         }
     }
 
-    public function test_required_validation_of_store_method()
+    public function testRequiredValidationOfStoreMethod()
     {
         $data = [];
         $response = $this->post('/api/groups', $data);
@@ -86,7 +86,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function test_field_name_max_validation_of_store_method()
+    public function testFieldNameMaxValidationOfStoreMethod()
     {
         $data = [
             'code' => rand(100, 999),
@@ -106,7 +106,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function test_field_cnpj_invalid_validation_of_store_method()
+    public function testFieldCnpjInvalidValidationOfStoreMethod()
     {
         $data = [
             'code' => rand(100, 999),
@@ -126,7 +126,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function test_unique_validation_of_method_store()
+    public function testUniqueValidationOfMethodStore()
     {
         $data = [
             'code' => rand(100, 999),
@@ -147,7 +147,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function test_show_method_and_expect_success_result()
+    public function testShowMethodAndExpectSuccessResult()
     {
         $data = [
             'code' => rand(100, 999),
@@ -170,7 +170,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function test_show_method_and_expect_not_found()
+    public function testShowMethodAndExpectNotFound()
     {
         $response = $this->get('/api/groups/1');
         $response->assertStatus(404);
