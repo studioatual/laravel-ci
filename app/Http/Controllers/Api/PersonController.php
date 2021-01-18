@@ -10,6 +10,7 @@ class PersonController extends Controller
 {
     public function index()
     {
-        return Person::all();
+        $page = request()->only('page');
+        return Person::paginate($page);
     }
 }

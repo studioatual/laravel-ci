@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\GroupController;
+use App\Http\Controllers\Api\PersonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +25,4 @@ Route::post('/groups', [GroupController::class, 'store']);
 Route::get('/groups/{group}', [GroupController::class, 'show']);
 Route::put('/groups/{group}', [GroupController::class, 'update']);
 Route::delete('/groups/{group}', [GroupController::class, 'destroy']);
+Route::get('/persons', [PersonController::class, 'index']);
