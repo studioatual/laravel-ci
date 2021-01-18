@@ -22,3 +22,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/groups', [GroupController::class, 'index']);
 Route::post('/groups', [GroupController::class, 'store']);
 Route::get('/groups/{group}', [GroupController::class, 'show']);
+Route::put('/groups/{group}', [GroupController::class, 'update']);

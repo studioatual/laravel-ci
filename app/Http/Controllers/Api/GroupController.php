@@ -32,6 +32,19 @@ class GroupController extends Controller
         return $group;
     }
 
+    public function update(Request $request, Group $group)
+    {
+        $data  = $this->filterData($request->all());
+
+        $validator = $this->validator($data, $group);
+        if ($validator->fails()) {
+            return response()->json($validator->errors())->setStatusCode(400);
+        }
+
+        $group->update($data);
+        return $group;
+    }
+
     protected function validator(array $data, Group $group = null)
     {
         return Validator::make($data, $this->getRules($group), $this->getMessages());

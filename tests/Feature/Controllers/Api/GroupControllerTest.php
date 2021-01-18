@@ -176,4 +176,41 @@ class GroupControllerTest extends TestCase
         $response->assertStatus(404);
         $response->assertNotFound();
     }
+
+    public function testUpdateMethodAndExpectSuccessResult()
+    {
+        $data = [
+            'code' => rand(100, 999),
+            'name' => 'FBS',
+            'cnpj' => '91462611000107',
+            'type' => 0,
+            'active' => 0,
+        ];
+        $group = Group::create($data);
+        $dataUpdate = [
+            'code' => 145,
+            'name' => 'FBS Sistemas',
+            'cnpj' => '35.537.792/0001-12',
+            'type' => 1,
+            'active' => 1,
+        ];
+        $response = $this->put('/api/groups/' . $group->id, $dataUpdate);
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'id',
+            'name',
+            'cnpj',
+            'type',
+            'active',
+            'created_at',
+            'updated_at'
+        ]);
+        $response->assertJson([
+            'code' => 145,
+            'name' => 'FBS Sistemas',
+            'cnpj' => '35537792000112',
+            'type' => 1,
+            'active' => 1,
+        ]);
+    }
 }
