@@ -45,6 +45,12 @@ class GroupController extends Controller
         return $group;
     }
 
+    public function destroy(Group $group)
+    {
+        $group->delete();
+        return response()->json(['result' => 'Ok']);
+    }
+
     protected function validator(array $data, Group $group = null)
     {
         return Validator::make($data, $this->getRules($group), $this->getMessages());

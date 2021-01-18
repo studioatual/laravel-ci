@@ -13,7 +13,7 @@ class GroupControllerTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testIndexMethodAndExpectTenResults()
+    public function testIndexMethodWithExpectedAllResults()
     {
         Group::factory(10)->create();
         $response = $this->get('/api/groups');
@@ -32,7 +32,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreMethodAndExpectSuccessResults()
+    public function testStoreMethodWithExpectedSuccessResult()
     {
         $data = [
             'code' => rand(100, 999),
@@ -70,7 +70,7 @@ class GroupControllerTest extends TestCase
         }
     }
 
-    public function testRequiredValidationOfStoreMethod()
+    public function testStoreMethodWithExpectedRequiredFieldsValidation()
     {
         $data = [];
         $response = $this->post('/api/groups', $data);
@@ -86,7 +86,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function testFieldNameMaxValidationOfStoreMethod()
+    public function testStoreMethodWithExpectedMaxCharacterInvalid()
     {
         $data = [
             'code' => rand(100, 999),
@@ -106,7 +106,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function testFieldCnpjInvalidValidationOfStoreMethod()
+    public function testStoreMethodWithExpectedCnpjInvalid()
     {
         $data = [
             'code' => rand(100, 999),
@@ -126,7 +126,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function testUniqueValidationOfMethodStore()
+    public function testStoreMethodWithExpectedUniqueValidation()
     {
         $data = [
             'code' => rand(100, 999),
@@ -147,7 +147,7 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function testShowMethodAndExpectSuccessResult()
+    public function testShowMethodWithExpectedSuccessResult()
     {
         $data = [
             'code' => rand(100, 999),
@@ -170,14 +170,14 @@ class GroupControllerTest extends TestCase
         ]);
     }
 
-    public function testShowMethodAndExpectNotFound()
+    public function testShowMethodWithExpectedNotFound()
     {
         $response = $this->get('/api/groups/1');
         $response->assertStatus(404);
         $response->assertNotFound();
     }
 
-    public function testUpdateMethodAndExpectSuccessResult()
+    public function testUpdateMethodWithExpectedSuccessResult()
     {
         $data = [
             'code' => rand(100, 999),
@@ -212,5 +212,106 @@ class GroupControllerTest extends TestCase
             'type' => 1,
             'active' => 1,
         ]);
+    }
+
+    public function testUpdateMethodWithExpectedCnpjInvalid()
+    {
+        $data = [
+            'code' => rand(100, 999),
+            'name' => 'FBS',
+            'cnpj' => '91462611000107',
+            'type' => 0,
+            'active' => 0,
+        ];
+        $group = Group::create($data);
+        $dataUpdate = [
+            'cnpj' => '35.537.792/0001-13',
+        ];
+        $response = $this->put('/api/groups/' . $group->id, $dataUpdate);
+        $response->assertStatus(400);
+        $response->assertExactJson([
+            'cnpj' => ['CNPJ é inválido!'],
+        ]);
+    }
+
+    public function testUpdateMethodWithExpectedMaxCharacterInvalid()
+    {
+        $data = [
+            'code' => rand(100, 999),
+            'name' => 'FBS',
+            'cnpj' => '91462611000107',
+            'type' => 0,
+            'active' => 0,
+        ];
+        $group = Group::create($data);
+        $dataUpdate = [
+            'name' => 'asdgfsdagsadg asdgasgsd asdgsdgasdg asdgsadgsdag asdgasdgas asdgasdga',
+        ];
+        $response = $this->put('/api/groups/' . $group->id, $dataUpdate);
+        $response->assertStatus(400);
+        $response->assertExactJson([
+            'name' => ['Máximo de 50 caracteres!']
+        ]);
+    }
+
+    public function testUpdateMethodWithExpectedNotFound()
+    {
+        $response = $this->put('/api/groups/1');
+        $response->assertStatus(404);
+        $response->assertNotFound();
+    }
+
+    public function testUpdateMethodWithExpectedUniqueValidation()
+    {
+        Group::factory(1)->create([
+            'cnpj' => '91462611000107'
+        ]);
+
+        $data = [
+            'code' => 145,
+            'name' => 'FBS Sistemas',
+            'cnpj' => '35.537.792/0001-12',
+            'type' => 1,
+            'active' => 0,
+        ];
+        $group = Group::create($data);
+
+        $updateData = [
+            'code' => rand(100, 999),
+            'name' => 'FBS Sistemas',
+            'cnpj' => '91.462.611/0001-07',
+            'type' => 0,
+            'active' => 1,
+        ];
+
+        $response = $this->put('/api/groups/' . $group->id, $updateData);
+        $response->assertStatus(400);
+        $response->assertExactJson([
+            'cnpj' => [preg_replace('/\D/', '', $updateData['cnpj']) . ' já em uso!']
+        ]);
+    }
+
+    public function testDestroyMethodWithExpectedSuccessResult()
+    {
+        $data = [
+            'code' => 145,
+            'name' => 'FBS Sistemas',
+            'cnpj' => '35.537.792/0001-12',
+            'type' => 1,
+            'active' => 0,
+        ];
+
+        $group = Group::create($data);
+
+        $response = $this->delete('/api/groups/' . $group->id);
+        $response->assertStatus(200);
+        $response->assertExactJson(['result' => 'Ok']);
+    }
+
+    public function testDestroyMethodWithExpectedNotFound()
+    {
+        $response = $this->delete('/api/groups/1');
+        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 }
